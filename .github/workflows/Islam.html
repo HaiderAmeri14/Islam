@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <title>الزيارات والأدعية الإسلامية</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+    body {
+      margin: 0;
+      font-family: 'Amiri', serif;
+      background: url('https://almerja.com/ph/img/mid/1587769981-1334.jpg') center/cover fixed no-repeat;
+      color: white;
+      text-align: center;
+      position: relative;
+      min-height: 100vh;
+    }
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.55);
+      z-index: -1;
+    }
+    .main, .content {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: none;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .main {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    h1 {
+      font-size: 32px;
+      margin-bottom: 30px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.7);
+    }
+    .button-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 15px;
+      max-width: 500px;
+      margin: auto;
+    }
+    button {
+      opacity: 0;
+      padding: 14px;
+      font-size: 18px;
+      border: 2px solid #FFD700;
+      border-radius: 30px;
+      background-color: rgba(255,215,0,0.2);
+      color: #FFD700;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s, opacity 0.5s ease-in;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+      white-space: nowrap;
+    }
+    button.visible {
+      opacity: 1;
+    }
+    button:hover {
+      background-color: #FFD700;
+      color: #333;
+    }
+    .content {
+      background-color: #000;
+      display: none; /* مخفي بشكل افتراضي */
+      max-width: 900px;
+      margin: auto;
+      border-radius: 10px;
+      padding: 30px;
+      box-sizing: border-box;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      /* سيتم ضبط display:flex من جافاسكربت */
+    }
+    .duaa-text {
+      max-width: 100%;
+      font-size: 22px;
+      line-height: 2.4;
+      direction: rtl;
+      text-align: justify;
+      white-space: pre-wrap;
+      margin-bottom: 30px;
+      color: white;
+      text-shadow: 1px 1px 3px rgba(255,255,255,0.2);
+      font-family: 'Amiri', serif;
+    }
+    .back-btn {
+      background-color: #FF8C00;
+      border-color: #FF8C00;
+      color: white;
+      padding: 12px 28px;
+      font-size: 18px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: background 0.3s;
+      box-shadow: 0 4px 8px rgba(255,140,0,0.5);
+    }
+    .back-btn:hover {
+      background-color: #FFA500;
+      box-shadow: 0 6px 12px rgba(255,165,0,0.7);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="overlay"></div>
+
+  <div class="main" id="mainMenu">
+    <h1>الزيارات والأدعية</h1>
+    <div class="button-grid" id="buttonsContainer">
+      <button onclick="showContent('ali')">زيارة الإمام علي</button>
+      <button onclick="showContent('warith')">زيارة وارث</button>
+      <button onclick="showContent('arbaeen')">زيارة الأربعين</button>
+      <button onclick="showContent('sabah')">دعاء الصباح</button>
+      <button onclick="showContent('simat')">دعاء السمات</button>
+      <button onclick="showContent('faraj')">دعاء الفرج</button>
+      <button onclick="showContent('komail')">دعاء كميل</button>
+    </div>
+  </div>
+
+  <div class="content" id="contentPage">
+    <div class="duaa-text" id="duaaText"></div>
+    <button class="back-btn" onclick="goBack()">عودة</button>
+  </div>
+
+<script>
+const duaas = {
+  ali: `السلام عليك يا أمير المؤمنين، أشهد أنّك أول مظلوم وأول من غُصِب حقّه، صبرت واحتسبت حتى أتاك اليقين، أشهد أنّك جاهدت في الله حق جهاده، وعملت بكتابه، واتبعت سنن نبيه صلى الله عليه وآله، حتى دعاك الله إلى جواره، فقبضك إليه باختياره، وألزم أعداءك الحجة مع ما لك من الحجج البالغة على جميع خلقه...
+
+السلام عليك يا وصي رسول رب العالمين، السلام عليك يا سيد الوصيين، السلام عليك يا إمام المتقين، السلام عليك يا يعسوب الدين، السلام عليك يا قائد الغر المحجلين، أشهد أنك كنت نوراً في الأصلاب الشامخة، والأرحام المطهرة، لم تنجسك الجاهلية بأنجاسها، ولم تلبسك من مدلهمات ثيابها...`,
+
+  warith: `السلام عليك يا وارث آدم صفوة الله، السلام عليك يا وارث نوح نبي الله، السلام عليك يا وارث إبراهيم خليل الله، السلام عليك يا وارث موسى كليم الله، السلام عليك يا وارث عيسى روح الله، السلام عليك يا وارث محمد حبيب الله، السلام عليك يا وارث أمير المؤمنين عليه السلام وليّ الله...
+
+أشهد أنك كنت نوراً في الأصلاب الشامخة، والأرحام المطهّرة، لم تنجّسك الجاهلية بأنجاسها، ولم تلبسك من مدلهمات ثيابها، وأشهد أنك من دعائم الدين، وأركان المؤمنين، وأشهد أنك الإمام البرّ التقيّ الرضيّ الزكيّ، الهادي المهدي، وأشهد أن الأئمة من ولدك، كلمة التقوى، وأعلام الهدى...`,
+
+  arbaeen: `السلام على ولي الله وحبيبه، السلام على خليل الله ونجيبه، السلام على صفي الله وابن صفيه، السلام على الحسين المظلوم الشهيد، السلام على أسير الكربات وقتيل العبرات، اللهم إني أشهد أنه وليك وابن وليك، وصفيك وابن صفيك، الفائز بكرامتك، أكرمته بالشهادة، وحبوته بالسعادة، واجتبيته بطيب الولادة، وجعلته سيداً من السادة، وقائداً من القادة، وذائداً من الذادة، وأعطيته مواريث الأنبياء، وجعلته حجة على ورثاء الأنبياء...
+
+أشهد أنك قد أقمت الصلاة، وآتيت الزكاة، وأمرت بالمعروف، ونهيت عن المنكر، وأطعت الله ورسوله حتى أتاك اليقين...`,
+
+  sabah: `اللهم يا من دلّ على ذاته بذاته، وأقبل على خلقه بوجهه، أنزلت الكتاب بيدك، وحققت به وعدك، وحققت على يد نبيك رسالتك، وأسست للعدل حكومتك، وأسست للهدى دعوتك، ونصرت من عصاك، وأنزلت على من أطاعك السلامة، اللهم إني أستودعك نفسي وروحي، فاجعلني من عبادك الصالحين، وارزقني الصبر واليقين، واجعلني من عبادك الذين يحسنون العمل، ويرجون رحمتك...`,
+
+  simat: `اللهم يا رب السماوات السبع ورب الأرضين السبع، ورب العرش العظيم، ربنا ورب كل شيء، فاطر السماوات والأرض، عالم الغيب والشهادة، أنت تحكم بين عبادك فيما كانوا فيه يختلفون، اهدنا إلى صراطك المستقيم، وارزقنا الثبات على دينك، اللهم اجعلنا من الذين يحبونك ويحبون من يحبك، واصرف عنا كل ما يغضبك...`,
+
+  faraj: `اللهم كن لوليك الحجة بن الحسن صلواتك عليه، في هذه الساعة وفي كل ساعة ولياً وحافظاً وقائداً وناصراً ودليلاً وعيناً حتى تسكنه أرضك طوعاً وتمكنه فيها تمكيناً يرضيك، اللهم فرج عنّا ما نحن فيه من كرب وهم وغم، اللهم اجعل الفرج قريباً والفرح دائمًا، اللهم صل على محمد وآل محمد...`,
+
+  komail: `اللهم إني أسألك برحمتك التي وسعت كل شيء، وبقدرتك التي قدرت بها على جميع خلقك، أن تغفر لي ذنوبي، وترحمني برحمتك، وأن تجعلني من الذين يسمعون القول فيتبعون أحسنه، اللهم اجعلني من الذين يحبونك ويحبون رسلك، وارزقني حب أهل بيتك الأطهار، وارزقني شفاعة النبي محمد وآله يوم القيامة، آمين...`
+};
+
+function showContent(key) {
+  document.getElementById('mainMenu').style.display = 'none';
+  const content = document.getElementById('contentPage');
+  content.style.display = 'flex';
+  document.getElementById('duaaText').innerText = duaas[key];
+}
+
+function goBack() {
+  document.getElementById('contentPage').style.display = 'none';
+  document.getElementById('mainMenu').style.display = 'flex';
+}
+
+// إظهار الأزرار تباعا
+window.onload = () => {
+  const buttons = document.querySelectorAll('#buttonsContainer button');
+  buttons.forEach((btn, i) => {
+    setTimeout(() => {
+      btn.classList.add('visible');
+    }, i * 300);
+  });
+};
+</script>
+
+</body>
+</html>
