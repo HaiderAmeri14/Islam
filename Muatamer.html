@@ -49,7 +49,6 @@ tr:hover{background:#e0f2fe;cursor:pointer;}
 <div class="col">
 <label>موقف البحث</label>
 <select id="status">
-
 <option value="قيد الاستلام">قيد الاستلام</option>
 <option value="مراجعة التعديلات">مراجعة التعديلات</option>
 <option value="ارسل للباحث لغرض التعديل">ارسل للباحث لغرض التعديل</option>
@@ -137,7 +136,6 @@ let submissions=[];
 let currentIndex=-1;
 let isNew=false;
 
-// عناصر النموذج
 const seqEl=document.getElementById('seq');
 const titleEl=document.getElementById('title');
 const receivedDateEl=document.getElementById('receivedDate');
@@ -162,6 +160,18 @@ const searchText=document.getElementById('searchText');
 const resultsTable=document.getElementById('resultsTable').querySelector('tbody');
 const prevBtn=document.getElementById('prevBtn');
 const nextBtn=document.getElementById('nextBtn');
+
+// دالة لإزالة الحركات والهمزات والمدات
+function normalizeArabic(text){
+  return text
+    .replace(/[\u064B-\u0652]/g,'')  // الحركات (تشكيل)
+    .replace(/[آأإ]/g,'ا')
+    .replace(/ؤ/g,'و')
+    .replace(/ئ/g,'ي')
+    .replace(/ة/g,'ه')
+    .replace(/ى/g,'ي')
+    .toLowerCase();
+}
 
 // دوال الباحثين والمقومين
 function createResearcherBlock(data={}){ 
@@ -226,16 +236,24 @@ function renderFromIndex(i){ if(i<0 || i>=submissions.length) return; const s=su
 // البحث
 function renderSearchResults(){
 const field=searchField.value; 
-const text=searchText.value.trim().toLowerCase();
+const text=normalizeArabic(searchText.value.trim());
 const filtered=submissions.filter(s=>{
 if(!text) return true;
-if(field==='all'){ if(s["التسلسل"].toString()===text)return true; if(s["عنوان البحث"].toLowerCase().includes(text))return true; if(s["اسم المرسل"].toLowerCase().includes(text))return true; if(s["موقف البحث"].toLowerCase().includes(text))return true; if(JSON.parse(s["الباحثون"]||'[]').some(r=>r.name.toLowerCase().includes(text))) return true; if(JSON.parse(s["المقومون"]||'[]').some(r=>r.name.toLowerCase().includes(text))) return true; return false;}
-if(field==='seq') return s["التسلسل"].toString()===text;
-if(field==='title') return s["عنوان البحث"].toLowerCase().includes(text);
-if(field==='senderName') return s["اسم المرسل"].toLowerCase().includes(text);
-if(field==='status') return s["موقف البحث"].toLowerCase().includes(text);
-if(field==='researchers') return JSON.parse(s["الباحثون"]||'[]').some(r=>r.name.toLowerCase().includes(text));
-if(field==='reviewers') return JSON.parse(s["المقومون"]||'[]').some(r=>r.name.toLowerCase().includes(text));
+if(field==='all'){ 
+if(normalizeArabic(s["التسلسل"].toString())===text)return true;
+if(normalizeArabic(s["عنوان البحث"])?.includes(text))return true;
+if(normalizeArabic(s["اسم المرسل"])?.includes(text))return true;
+if(normalizeArabic(s["موقف البحث"])?.includes(text))return true;
+if(JSON.parse(s["الباحثون"]||'[]').some(r=>normalizeArabic(r.name).includes(text))) return true;
+if(JSON.parse(s["المقومون"]||'[]').some(r=>normalizeArabic(r.name).includes(text))) return true;
+return false;
+}
+if(field==='seq') return normalizeArabic(s["التسلسل"].toString())===text;
+if(field==='title') return normalizeArabic(s["عنوان البحث"])?.includes(text);
+if(field==='senderName') return normalizeArabic(s["اسم المرسل"])?.includes(text);
+if(field==='status') return normalizeArabic(s["موقف البحث"])?.includes(text);
+if(field==='researchers') return JSON.parse(s["الباحثون"]||'[]').some(r=>normalizeArabic(r.name).includes(text));
+if(field==='reviewers') return JSON.parse(s["المقومون"]||'[]').some(r=>normalizeArabic(r.name).includes(text));
 return false;
 });
 resultsTable.innerHTML='';
@@ -255,12 +273,8 @@ saveBtn.onclick=e=>{e.preventDefault(); saveSubmission();};
 searchBtn.onclick=e=>{ searchModal.style.display='flex'; renderSearchResults();};
 closeModal.onclick=e=>{ searchModal.style.display='none';};
 searchText.addEventListener('input', renderSearchResults);
-
-// أزرار التالي / السابق
 prevBtn.onclick=()=>{ if(currentIndex>0){ currentIndex--; renderFromIndex(currentIndex); }};
 nextBtn.onclick=()=>{ if(currentIndex<submissions.length-1){ currentIndex++; renderFromIndex(currentIndex); }};
-
-// تهيئة الصفحة
 loadSubmissions();
 </script>
 </body>
