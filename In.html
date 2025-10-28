@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>بحوث مؤتمر الإمام الرضا (عليه السلام)</title>
+<title>مؤتمرات دار اللغة والأدب العربي</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap');
 
@@ -28,8 +28,10 @@ body {display:flex; justify-content:center; align-items:center; color:#fff; back
 
 h1 {margin-bottom:20px; font-size:2rem; text-shadow: 0 0 10px #00d4ff;}
 p.description {font-size:1rem; margin-bottom:35px; line-height:1.5; color:#ddd;}
+
+/* أزرار المؤتمر والمهرجان */
 a.button {
-    display:inline-block;
+    display:block;
     padding:15px 35px;
     font-size:1.2rem;
     background: linear-gradient(45deg,#1e90ff,#00ced1);
@@ -38,11 +40,15 @@ a.button {
     border-radius:50px;
     box-shadow:0 0 20px rgba(30,144,255,0.7);
     transition:0.3s;
+    margin: 10px auto;
+    max-width: 300px;
 }
+
 a.button:hover {
     transform: translateY(-4px);
     box-shadow:0 0 30px rgba(30,144,255,1);
 }
+
 .footer {margin-top:25px; font-size:0.9rem; color:#aaa;}
 
 /* استجابة الهواتف */
@@ -56,12 +62,14 @@ a.button:hover {
 <body>
 
 <div class="login-container">
-    <h1>بحوث مؤتمر الإمام الرضا (عليه السلام)</h1>
+    <h1>مؤتمرات دار اللغة والأدب العربي</h1>
     <p class="description">
-        دار اللغة والأدب العربي بالتعاون مع جامعة كربلاء<br>
-        كلية العلوم الإسلامية - قسم علوم القرآن والتربية الإسلامية
+        متابعة أحدث الأبحاث والمؤتمرات في مجال اللغة والأدب العربي
     </p>
-    <a href="https://haiderameri14.github.io/Islam/Muatamer.html" class="button">دخول</a>
+    <!-- زر مؤتمر الإمام الرضا -->
+    <a href="https://haiderameri14.github.io/Islam/Muatamer.html" class="button">مؤتمر الإمام الرضا (عليه السلام)</a>
+    <!-- زر مهرجان اليوم العالمي للغة العربية -->
+    <a href="https://haiderameri14.github.io/Islam/Mhrgan.html" class="button">مهرجان اليوم العالمي للغة العربية</a>
     <div class="footer">إعداد وتصميم: حيدر العامري</div>
 </div>
 
@@ -73,7 +81,7 @@ const ctx = canvas.getContext('2d');
 let width = canvas.width = window.innerWidth;
 let height = canvas.height = window.innerHeight;
 
-// إعداد شبكة نقاط وخطوط ديناميكية
+// شبكة نقاط وخطوط ديناميكية
 const particles = [];
 const colors = ['#00d4ff','#ffd700','#ff8c00','#1e90ff'];
 
