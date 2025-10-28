@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مهرجان يوم الضاد العالمي</title>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Cairo', sans-serif; }
+    body, html {
+        height: 100%;
+        width: 100%;
+        overflow: hidden;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background: linear-gradient(135deg, #1e3c72, #2a5298);
+        position: relative;
+    }
+    .background {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 200%;
+        height: 200%;
+        background: radial-gradient(circle, rgba(255,255,255,0.1) 1%, transparent 1%);
+        background-size: 50px 50px;
+        animation: move 20s linear infinite;
+        z-index: 1;
+    }
+    @keyframes move {
+        0% { transform: translate(0, 0); }
+        100% { transform: translate(-50%, -50%); }
+    }
+    .container {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        color: #fff;
+        padding: 40px;
+        border-radius: 20px;
+        backdrop-filter: blur(10px);
+        background: rgba(0,0,0,0.3);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+    h1 { font-size: 2.5rem; margin-bottom: 20px; text-shadow: 2px 2px 8px rgba(0,0,0,0.5); }
+    p.subtitle { font-size: 1.2rem; margin-bottom: 40px; }
+    .buttons { display: flex; justify-content: center; gap: 30px; margin-bottom: 30px; }
+    .buttons button {
+        padding: 15px 35px;
+        font-size: 1.2rem;
+        border: none;
+        border-radius: 12px;
+        cursor: pointer;
+        background: linear-gradient(145deg, #ff7e5f, #feb47b);
+        color: #fff;
+        font-weight: bold;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.4);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
+    .buttons button:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+    }
+    .footer { font-size: 0.9rem; margin-top: 20px; color: #f0f0f0; }
+    .popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        background: linear-gradient(145deg, #ff7e5f, #feb47b);
+        padding: 25px 50px;
+        border-radius: 15px;
+        color: #fff;
+        font-size: 1.3rem;
+        font-weight: bold;
+        text-align: center;
+        box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+        z-index: 10;
+        perspective: 1000px;
+        transition: transform 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.5s;
+        opacity: 0;
+    }
+    .popup.show {
+        transform: translate(-50%, -50%) scale(1) rotateX(0deg);
+        opacity: 1;
+    }
+    @media (max-width: 768px) {
+        h1 { font-size: 2rem; }
+        .buttons { flex-direction: column; gap: 20px; }
+        .buttons button { width: 200px; }
+    }
+</style>
+</head>
+<body>
+    <div class="background"></div>
+    <div class="container">
+        <h1>مهرجان يوم الضاد العالمي</h1>
+        <p class="subtitle">دار اللغة والأدب العربي بالتعاون مع جامعة الكوفة، جامعة كربلاء، وجامعة الزهراء عليها السلام</p>
+        <div class="buttons">
+            <button onclick="showPopup()">المؤتمر</button>
+            <button onclick="showPopup()">بردة كربلاء</button>
+        </div>
+        <div class="footer">تصميم وإعداد حيدر العامري</div>
+    </div>
+
+    <div class="popup" id="popup">قيد الإنشاء</div>
+
+    <script>
+        function showPopup() {
+            const popup = document.getElementById('popup');
+            popup.classList.add('show');
+            setTimeout(() => {
+                popup.classList.remove('show');
+            }, 4000); // تظهر لمدة 4 ثواني ثم تختفي
+        }
+    </script>
+</body>
+</html>
