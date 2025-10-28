@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>نمؤتمر الإمام الرضا</title>
+<style>
+:root{--accent:#2563eb;--muted:#6b7280;--card:#ffffff;--bg:#f1f5f9;--danger:#ef4444;}
+body{background:var(--bg);margin:0;font-family:"Segoe UI",Tahoma,Arial,sans-serif;direction:rtl;color:#0b1a2b;padding:10px;}
+.container{max-width:980px;margin:0 auto;}
+.card{background:var(--card);border-radius:12px;box-shadow:0 8px 24px rgba(11,26,43,0.06);padding:16px;margin-bottom:14px;}
+label{display:block;margin:8px 0 6px;font-weight:600;}
+input,select,textarea{width:100%;padding:10px;border:1px solid #e6edf7;border-radius:8px;box-sizing:border-box;}
+.row{display:flex;gap:12px;flex-wrap:wrap;}
+.col{flex:1;min-width:0;}
+.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+button{padding:10px 12px;border-radius:10px;border:none;background:var(--accent);color:#fff;cursor:pointer;font-weight:600;}
+button.secondary{background:#374151;}
+.small{font-size:13px;padding:8px 12px;}
+.list-item{border:1px solid #e6eef9;padding:10px;margin:10px 0;border-radius:10px;position:relative;background:linear-gradient(180deg,rgba(37,99,235,0.02),transparent);}
+.remove-btn{position:absolute;left:10px;top:10px;background:var(--danger);padding:6px 8px;border-radius:8px;font-size:13px;color:#fff;border:none;cursor:pointer;}
+.meta{font-size:13px;color:var(--muted);}
+@media (max-width:720px){.row{flex-direction:column}.remove-btn{left:auto;right:10px}button,.small{width:100%;}}
+.modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.6);justify-content:center;align-items:center;z-index:1000;}
+.modal-content{background:#fff;width:95%;max-width:1000px;border-radius:12px;padding:16px;max-height:90%;overflow:auto;position:relative;}
+.close-modal{position:absolute;top:10px;left:10px;background:var(--danger);color:#fff;padding:6px 10px;border:none;border-radius:8px;cursor:pointer;}
+table{width:100%;border-collapse:collapse;margin-top:10px;}
+th,td{border:1px solid #ddd;padding:8px;text-align:right;font-size:13px;}
+th{background:#f3f4f6;}
+tr:hover{background:#e0f2fe;cursor:pointer;}
+.search-inline{margin-bottom:8px;}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="card">
+<h2>مؤتمر الإمام الرضا عليه السلام</h2>
+<div class="row">
+<div class="col"><label>التسلسل (تلقائي)</label><input id="seq" readonly></div>
+<div class="col"><label>عنوان البحث</label><input id="title"></div>
+</div>
+
+<div class="row">
+<div class="col"><label>تاريخ الاستلام</label><input id="receivedDate" type="date"></div>
+<div class="col"><label>اسم المرسل</label><input id="senderName"></div>
+</div>
+
+<div class="row">
+<div class="col">
+<label>موقف البحث</label>
+<select id="status">
+
+<option value="قيد الاستلام">قيد الاستلام</option>
+<option value="مراجعة التعديلات">مراجعة التعديلات</option>
+<option value="ارسل للباحث لغرض التعديل">ارسل للباحث لغرض التعديل</option>
+<option value="قيد التقييم">قيد التقييم</option>
+<option value="مقبول">مقبول</option>
+<option value="مرفوض">مرفوض</option>
+</select>
+</div>
+<div class="col">
+<label>الباحثون</label>
+<div class="controls">
+<span id="researcherCount" class="meta">0</span>
+<button id="addResearcher" class="small">أضف باحث</button>
+</div>
+</div>
+</div>
+<div id="researchersContainer"></div>
+
+<hr>
+<h3>المقومون</h3>
+<div class="row">
+<div class="col">
+<label>المقومون</label>
+<div class="controls">
+<span id="reviewerCount" class="meta">0</span>
+<button id="addReviewer" class="small">أضف مقوم</button>
+</div>
+</div>
+<div class="col"><label>تاريخ الإرسال</label><input id="sentDate" type="date"></div>
+</div>
+<div id="reviewersContainer"></div>
+
+<label>الملاحظات</label>
+<textarea id="notes" rows="3"></textarea>
+<label>القرار النهائي</label>
+<select id="finalDecision">
+<option value="لم يقرر">لم يقرر</option>
+<option value="مقبول">مقبول</option>
+<option value="مرفوض">مرفوض</option>
+<option value="تعديل و إعادة">تعديل و إعادة</option>
+</select>
+
+<div class="actions">
+<button id="prevBtn" class="secondary">السابق</button>
+<button id="nextBtn" class="secondary">التالي</button>
+<button id="newBtn" class="secondary">بحث جديد</button>
+<button id="saveBtn">حفظ</button>
+<button id="searchBtn" class="secondary">بحث</button>
+</div>
+</div>
+</div>
+
+<!-- Modal البحث -->
+<div class="modal" id="searchModal">
+<div class="modal-content">
+<button class="close-modal" id="closeModal">إغلاق</button>
+<h3>نتائج البحث</h3>
+<div class="search-inline">
+<label>بحث حسب:</label>
+<select id="searchField">
+<option value="all">الكل</option>
+<option value="seq">التسلسل</option>
+<option value="title">العنوان</option>
+<option value="senderName">المرسل</option>
+<option value="researchers">الباحثين</option>
+<option value="reviewers">المقومين</option>
+<option value="status">الحالة</option>
+</select>
+<input type="text" id="searchText" placeholder="اكتب كلمة البحث هنا">
+</div>
+<table id="resultsTable">
+<thead>
+<tr>
+<th>التسلسل</th><th>العنوان</th><th>المرسل</th><th>الحالة</th><th>تاريخ الاستلام</th><th>الباحثون</th><th>المقومون</th><th>القرار النهائي</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+</div>
+</div>
+
+<script>
+const API_URL='https://sheetdb.io/api/v1/cr5zznzymj13z';
+let submissions=[];
+let currentIndex=-1;
+let isNew=false;
+
+// عناصر النموذج
+const seqEl=document.getElementById('seq');
+const titleEl=document.getElementById('title');
+const receivedDateEl=document.getElementById('receivedDate');
+const senderNameEl=document.getElementById('senderName');
+const statusEl=document.getElementById('status');
+const researchersContainer=document.getElementById('researchersContainer');
+const addResearcherBtn=document.getElementById('addResearcher');
+const researcherCountEl=document.getElementById('researcherCount');
+const reviewersContainer=document.getElementById('reviewersContainer');
+const addReviewerBtn=document.getElementById('addReviewer');
+const reviewerCountEl=document.getElementById('reviewerCount');
+const sentDateEl=document.getElementById('sentDate');
+const notesEl=document.getElementById('notes');
+const finalDecisionEl=document.getElementById('finalDecision');
+const newBtn=document.getElementById('newBtn');
+const saveBtn=document.getElementById('saveBtn');
+const searchBtn=document.getElementById('searchBtn');
+const searchModal=document.getElementById('searchModal');
+const closeModal=document.getElementById('closeModal');
+const searchField=document.getElementById('searchField');
+const searchText=document.getElementById('searchText');
+const resultsTable=document.getElementById('resultsTable').querySelector('tbody');
+const prevBtn=document.getElementById('prevBtn');
+const nextBtn=document.getElementById('nextBtn');
+
+// دوال الباحثين والمقومين
+function createResearcherBlock(data={}){ 
+const wrapper=document.createElement('div'); wrapper.className='list-item';
+wrapper.innerHTML=`<label>اسم الباحث</label><input class='r-name' value='${data.name||''}'><div class='row'><div class='col'><label>اللقب العلمي</label><input class='r-title' value='${data.title||''}'></div><div class='col'><label>الهاتف</label><input class='r-phone' value='${data.phone||''}'></div></div><div class='row'><div class='col'><label>مكان العمل</label><input class='r-work' value='${data.work||''}'></div><div class='col'><label>الدولة</label><input class='r-country' value='${data.country||''}'></div></div><label>البريد الإلكتروني</label><input class='r-email' value='${data.email||''}'>`;
+const removeBtn=document.createElement('button'); removeBtn.textContent='حذف'; removeBtn.className='remove-btn';
+removeBtn.onclick=()=>{ if(confirm('هل تريد حذف هذا الباحث؟')){ wrapper.remove(); updateResearcherCount(); }};
+wrapper.prepend(removeBtn); researchersContainer.appendChild(wrapper); updateResearcherCount();
+}
+function updateResearcherCount(){ researcherCountEl.textContent=researchersContainer.children.length; }
+
+function createReviewerBlock(data={}){ 
+const wrapper=document.createElement('div'); wrapper.className='list-item';
+wrapper.innerHTML=`<label>اسم المقوّم</label><input class='v-name' value='${data.name||''}'><div class='row'><div class='col'><label>تاريخ الإرسال</label><input class='v-sent' type='date' value='${data.sent||''}'></div><div class='col'><label>تاريخ الاستلام</label><input class='v-received' type='date' value='${data.received||''}'></div></div><label>نتيجة التقويم</label><input class='v-result' value='${data.result||''}'>`;
+const removeBtn=document.createElement('button'); removeBtn.textContent='حذف'; removeBtn.className='remove-btn';
+removeBtn.onclick=()=>{ if(confirm('هل تريد حذف هذا المقوم؟')){ wrapper.remove(); updateReviewerCount(); }};
+wrapper.prepend(removeBtn); reviewersContainer.appendChild(wrapper); updateReviewerCount();
+}
+function updateReviewerCount(){ reviewerCountEl.textContent=reviewersContainer.children.length; }
+
+// جمع البيانات
+function collectForm(){
+const researchers=Array.from(researchersContainer.children).map(node=>({name: node.querySelector('.r-name').value.trim(), title: node.querySelector('.r-title').value.trim(), phone: node.querySelector('.r-phone').value.trim(), work: node.querySelector('.r-work').value.trim(), country: node.querySelector('.r-country').value.trim(), email: node.querySelector('.r-email').value.trim()}));
+const reviewers=Array.from(reviewersContainer.children).map(node=>({name: node.querySelector('.v-name').value.trim(), sent: node.querySelector('.v-sent').value, received: node.querySelector('.v-received').value, result: node.querySelector('.v-result').value.trim()}));
+return {
+"التسلسل": currentIndex>=0?(currentIndex+1):submissions.length+1,
+"عنوان البحث": titleEl.value.trim(),
+"تاريخ الاستلام": receivedDateEl.value,
+"اسم المرسل": senderNameEl.value.trim(),
+"موقف البحث": statusEl.value,
+"الباحثون": JSON.stringify(researchers),
+"المقومون": JSON.stringify(reviewers),
+"تاريخ الإرسال": sentDateEl.value,
+"الملاحظات": notesEl.value.trim(),
+"القرار النهائي": finalDecisionEl.value,
+"تاريخ الحفظ": new Date().toLocaleString()
+};
+}
+
+// وظائف API
+async function loadSubmissions(){
+const res=await fetch(API_URL); submissions=await res.json();
+if(submissions.length) currentIndex=0; updateSeq(); renderFromIndex(currentIndex);
+}
+async function saveSubmission(){
+const data=collectForm();
+if(!data["عنوان البحث"]){alert('الرجاء إدخال عنوان البحث'); return;}
+if(isNew || currentIndex===-1){
+const res=await fetch(API_URL,{method:'POST',headers:{"Content-Type":"application/json"},body:JSON.stringify({data})});
+const result=await res.json(); alert('تم حفظ السجل بنجاح'); isNew=false;
+await loadSubmissions();
+currentIndex=submissions.length-1; renderFromIndex(currentIndex);
+}else{
+const seq=submissions[currentIndex]["التسلسل"];
+const res=await fetch(`${API_URL}/التسلسل/${seq}`,{method:'PUT',headers:{"Content-Type":"application/json"},body:JSON.stringify({data})});
+const result=await res.json(); alert('تم تحديث السجل'); await loadSubmissions(); renderFromIndex(currentIndex);
+}}
+function updateSeq(){ seqEl.value=currentIndex>=0?(currentIndex+1):submissions.length+1; }
+function newSubmission(){ titleEl.value=''; receivedDateEl.value=''; senderNameEl.value=''; statusEl.value='قيد الاستلام'; researchersContainer.innerHTML=''; reviewersContainer.innerHTML=''; notesEl.value=''; finalDecisionEl.value='لم يقرر'; sentDateEl.value=''; currentIndex=-1; isNew=true; updateSeq(); }
+function renderFromIndex(i){ if(i<0 || i>=submissions.length) return; const s=submissions[i]; seqEl.value=s["التسلسل"]; titleEl.value=s["عنوان البحث"]; receivedDateEl.value=s["تاريخ الاستلام"]; senderNameEl.value=s["اسم المرسل"]; statusEl.value=s["موقف البحث"]; notesEl.value=s["الملاحظات"]; finalDecisionEl.value=s["القرار النهائي"]; sentDateEl.value=s["تاريخ الإرسال"]; researchersContainer.innerHTML=''; reviewersContainer.innerHTML=''; JSON.parse(s["الباحثون"]||'[]').forEach(r=>createResearcherBlock(r)); JSON.parse(s["المقومون"]||'[]').forEach(r=>createReviewerBlock(r)); currentIndex=i; isNew=false; updateSeq(); }
+
+// البحث
+function renderSearchResults(){
+const field=searchField.value; 
+const text=searchText.value.trim().toLowerCase();
+const filtered=submissions.filter(s=>{
+if(!text) return true;
+if(field==='all'){ if(s["التسلسل"].toString()===text)return true; if(s["عنوان البحث"].toLowerCase().includes(text))return true; if(s["اسم المرسل"].toLowerCase().includes(text))return true; if(s["موقف البحث"].toLowerCase().includes(text))return true; if(JSON.parse(s["الباحثون"]||'[]').some(r=>r.name.toLowerCase().includes(text))) return true; if(JSON.parse(s["المقومون"]||'[]').some(r=>r.name.toLowerCase().includes(text))) return true; return false;}
+if(field==='seq') return s["التسلسل"].toString()===text;
+if(field==='title') return s["عنوان البحث"].toLowerCase().includes(text);
+if(field==='senderName') return s["اسم المرسل"].toLowerCase().includes(text);
+if(field==='status') return s["موقف البحث"].toLowerCase().includes(text);
+if(field==='researchers') return JSON.parse(s["الباحثون"]||'[]').some(r=>r.name.toLowerCase().includes(text));
+if(field==='reviewers') return JSON.parse(s["المقومون"]||'[]').some(r=>r.name.toLowerCase().includes(text));
+return false;
+});
+resultsTable.innerHTML='';
+filtered.forEach(s=>{
+const tr=document.createElement('tr');
+tr.innerHTML=`<td>${s["التسلسل"]}</td><td>${s["عنوان البحث"]}</td><td>${s["اسم المرسل"]}</td><td>${s["موقف البحث"]}</td><td>${s["تاريخ الاستلام"]}</td><td>${JSON.parse(s["الباحثون"]||'[]').map(r=>r.name).join(', ')}</td><td>${JSON.parse(s["المقومون"]||'[]').map(r=>r.name).join(', ')}</td><td>${s["القرار النهائي"]}</td>`;
+tr.onclick=()=>{ renderFromIndex(submissions.indexOf(s)); searchModal.style.display='none';};
+resultsTable.appendChild(tr);
+});
+}
+
+// الأحداث
+addResearcherBtn.onclick=e=>{e.preventDefault(); createResearcherBlock();};
+addReviewerBtn.onclick=e=>{e.preventDefault(); createReviewerBlock();};
+newBtn.onclick=e=>{e.preventDefault(); newSubmission();};
+saveBtn.onclick=e=>{e.preventDefault(); saveSubmission();};
+searchBtn.onclick=e=>{ searchModal.style.display='flex'; renderSearchResults();};
+closeModal.onclick=e=>{ searchModal.style.display='none';};
+searchText.addEventListener('input', renderSearchResults);
+
+// أزرار التالي / السابق
+prevBtn.onclick=()=>{ if(currentIndex>0){ currentIndex--; renderFromIndex(currentIndex); }};
+nextBtn.onclick=()=>{ if(currentIndex<submissions.length-1){ currentIndex++; renderFromIndex(currentIndex); }};
+
+// تهيئة الصفحة
+loadSubmissions();
+</script>
+</body>
+</html>
